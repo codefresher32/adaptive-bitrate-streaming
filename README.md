@@ -1,70 +1,84 @@
-# Getting Started with Create React App
+# adaptive-bitrate-streaming
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Adaptive bitrate streaming with different streams format(HLS, DASH, MP4) in a video player called [vimond-replay](https://www.npmjs.com/package/vimond-replay?activeTab=readme). I have contributed to the [vimond-replay](https://github.com/vimond/replay/graphs/contributors) package for enabling the feature of switching among different available bitrate of the stream(HLS & DASH).
 
-## Available Scripts
+## How to work with this project
 
-In the project directory, you can run:
+### Directory structure
 
-### `npm start`
+| Folder | Description |
+| --- | --- |
+| <code>/ src        </code>| The components for initializing `Replay` |
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### nvm 
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+I use nvm to lock the node version used in the project. Install nvm by following the guides here https://github.com/nvm-sh/nvm
 
-### `npm test`
+After install, run these commands in the projects main directory.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```
+$ nvm use
+```
+```
+$ nvm install
+```
 
-### `npm run build`
+### Install dependencies
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```
+$ npm install
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Run dev environment
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Now start your application. It will run on localhost:3000
 
-### `npm run eject`
+```console
+$ npm run dev
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Building
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+To build the library run the command:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```
+$ npm run build
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+That will bundle all the utils using webpack. The bundled library will be in the `dist` directory.
 
-## Learn More
+## Project Description
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Basically in this project, I have shown how to use `Replay` player for playing different formats of streams(HLS, DASH, MP4).
+While running this project, you can switch between different available bitrate in your stream. In the project, I set the `Replay`
+configuration to instantly switch my picked bitrate from the `settings` icon of the player. So in that time, already buffered stream segment will be dropped and newly picked segment will be loaded and played. I have use the follow configuration for that:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```js
+{
+  videoStreamer: {
+    manualBitrateSwitchStrategy: 'instant-switch'
+  },
+  controls: {
+    qualitySelectionStrategy: 'fix-bitrate'
+  },
+}
+```
 
-### Code Splitting
+You also can smoothly switch to your picked bitrate if you use the following `Replay` configuration:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+```js
+{
+  videoStreamer: {
+    manualBitrateSwitchStrategy: 'smooth-switch'
+  },
+  controls: {
+    qualitySelectionStrategy: 'fix-bitrate'
+  },
+}
+```
 
-### Analyzing the Bundle Size
+Using the following configuration, already buffered will be played at the time being and selected bitrate will be loaded for the next stream segment.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+Also if you want to switch automatically, then you can select the `Automatic` option from `settings` icon of the `Replay` player. Then the bitrate will be switched based on your device conditions, networks bandwidth etc.
 
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+To know more about `Replay`, visit [Full feature list](https://vimond.github.io/replay/#/#features-list).
