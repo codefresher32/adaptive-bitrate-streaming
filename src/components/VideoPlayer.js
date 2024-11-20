@@ -1,41 +1,38 @@
-import React from "react";
-import { Replay } from 'vimond-replay';
-import CompoundVideoStreamer from 'vimond-replay/video-streamer/compound';
+import React, { useEffect, useRef } from 'react';
+import shaka from 'shaka-player';
 
-const replayOptions = {
-  videoStreamer: {
-    manualBitrateSwitchStrategy: 'instant-switch'
-  },
-  controls: {
-    qualitySelectionStrategy: 'fix-bitrate'
-  },
-};
+const VideoPlayer =({ sourceUrl })=> {
+  const videoRef = useRef(null);
 
-const getSourceFromUrl = (sourceUrl) => {
-  if (sourceUrl.includes('.m3u8')) {
-    return {
-      streamUrl: sourceUrl,
-      contentType: 'application/x-mpegurl',
-    };
-  }
-  if (sourceUrl.includes('.mpd')) {
-    return {
-      streamUrl: sourceUrl,
-      contentType: 'application/dash+xml',
+  useEffect(() => {
+    shaka.polyfill.installAll();
+    if (shaka.Player.isBrowserSupported()) {
+      const player = new shaka.Player(videoRef.current);
+      // Custom request filter to allow cross-site requests
+      // player.getNetworkingEngine().registerRequestFilter(function(type, request, context) {
+        
+      //   if (type === 0 || type === 1) {
+      //     request.allowCrossSiteCredentials = true;
+      //   }
+      // });
+
+      player.load(sourceUrl)
+        .then(() => {
+          console.log('The video has been loaded.');
+        })
+        .catch((error) => {
+          console.error('Error loading the video:', error);
+        });
+    } else {
+      console.error('Browser not supported.');
     }
-  }
-  return sourceUrl;
-};
+  }, [sourceUrl]);
 
-const VideoPlayer = ({ sourceUrl }) => {
   return (
-    <Replay
-      source={getSourceFromUrl(sourceUrl)}
-      options={replayOptions}
-    >
-      <CompoundVideoStreamer />
-    </Replay>
+    <div>
+      <video ref={videoRef} width="640" height="360" controls autoPlay />
+    </div>
   );
-};
+}
 
 export default VideoPlayer;
